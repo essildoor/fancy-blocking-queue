@@ -42,10 +42,12 @@ public class FancyBlockingQueue<E> {
             }
             storage[indexToPut] = element;
             count++;
-            System.out.println(String.format("queue : current queue size is %d", count));
-            indexToTake = indexToPut;
-            if (count < storage.length) indexToPut++;
-
+            if (count < storage.length) { //if there is at least one free element in array
+                //increment indexToPut. if it reaches array bound - point to the 1st el of array.
+                indexToPut = indexToPut == storage.length - 1 ? indexToPut = 0 : indexToPut + 1;
+            } else { //if array is full at the moment
+                indexToPut = indexToTake; //point to next el to be taken
+            }
             this.notifyAll();
         }
     }
@@ -70,9 +72,8 @@ public class FancyBlockingQueue<E> {
             }
             result = getElementAt(indexToTake);
             count--;
-            System.out.println(String.format("queue : current queue size is %d", count));
-            indexToPut = indexToTake;
-            if (indexToTake > 0) indexToTake--;
+            //increment in cyclic way
+            indexToTake = indexToTake == storage.length - 1 ? indexToTake = 0 : indexToTake + 1;
 
             this.notifyAll();
         }
